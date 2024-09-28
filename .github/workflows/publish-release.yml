@@ -52,10 +52,16 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo
             })).data;
-            console.log('Previous release was: ' + releases[1].name);
-            for (let release of releases.slice(1)) {
-              if (release.name.includes(READ_VERSION))
-                core.setFailed('Version number is the same as a previous release!')
+            //如果历史版本小于1跳过检查
+            if (releases.length < 1) {
+                console.log('No previous releases found. You can proceed with the new release.');
+                // 直接返回或继续发布
+            } else {
+                console.log('Previous release was: ' + releases[0].name); // 获取最新的发布版本
+                for (let release of releases) {
+                    if (release.name.includes(READ_VERSION))
+                        core.setFailed('Version number is the same as a previous release!');
+                }
             }
   Build-And-Publish:
     runs-on: ubuntu-latest
