@@ -162,31 +162,3 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git commit -am "Merge docs for '${{ github.event.release.name }}'" || exit 0
           git push
-  Update-Rules-Wiki:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Carpet sources
-        uses: actions/checkout@v3
-      - name: Set up JDK 17
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'temurin'
-          java-version: 17
-          cache: 'gradle'
-      - name: Checkout wiki
-        uses: actions/checkout@v3
-        with:
-          repository: ${{github.repository}}.wiki
-          path: wiki
-      - name: Run rule printer into the wiki page
-        run: |
-          chmod +x gradlew
-          ./gradlew runServer --args="-- -carpetDumpRules -dumpPath ../wiki/Current-Available-Settings.md"
-      - name: Commit updated wiki page
-        continue-on-error: true
-        run: |
-          cd wiki
-          git config --global user.name 'github-actions-bot' # Releases don't have valid commiter info :(
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git commit -am "Update wiki for '${{ github.event.release.name }}'" || exit 0
-          git push
